@@ -1,0 +1,78 @@
+@startuml
+title Diagrama de Secuencia - Riego Automático
+
+actor Usuario
+
+participant main as "main.py"
+participant TempTask as "TemperaturaReaderTask"
+participant HumTask as "HumedadReaderTask"
+participant ControlTask as "ControlRiegoTask"
+participant PlantacionService
+participant CultivoServiceRegistry as Registry
+participant AbsorcionStrategy as "<<Strategy>>\nAbsorcionAguaStrategy"
+
+Usuario -> main: Iniciar sistema
+activate main
+
+main -> TempTask: start()
+activate TempTask
+main -> HumTask: start()
+activate HumTask
+main -> ControlTask: start()
+activate ControlTask
+
+loop Lectura de Sensores
+    TempTask -> TempTask: _leer_temperatura()
+    TempTask -> ControlTask: actualizar(evento: temp)
+    activate ControlTask
+    ControlTask --> TempTask
+    deactivate ControlTask
+    
+    HumTask -> HumTask: _leer_humedad()
+    HumTask -> ControlTask: actualizar(evento: hum)
+    activate ControlTask
+    ControlTask --> HumTask
+    deactivate ControlTask
+end
+
+loop Chequeo de Control
+    ControlTask -> ControlTask: _debe_regar()
+    alt Condiciones Óptimas
+        ControlTask -> PlantacionService: regar(plantacion, ...)
+        activate PlantacionService
+        
+        PlantacionService -> Registry: absorber_agua(cultivo, ...)
+        activate Registry
+        
+        Registry -> AbsorcionStrategy: calcular_absorcion(...)
+        activate AbsorcionStrategy
+        AbsorcionStrategy --> Registry: agua_absorbida
+        deactivate AbsorcionStrategy
+        
+        Registry --> PlantacionService: total_absorbido
+        deactivate Registry
+        
+        PlantacionService --> ControlTask
+        deactivate PlantacionService
+    else Condiciones No Aptas
+        ControlTask -> ControlTask: No hacer nada
+    end
+end
+
+Usuario -> main: Detener sistema
+main -> TempTask: detener()
+main -> HumTask: detener()
+main -> ControlTask: detener()
+
+main -> TempTask: join()
+main -> HumTask: join()
+main -> ControlTask: join()
+
+deactivate TempTask
+deactivate HumTask
+deactivate ControlTask
+
+main --> Usuario: Sistema detenido
+deactivate main
+
+@enduml

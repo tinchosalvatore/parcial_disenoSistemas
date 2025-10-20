@@ -1,0 +1,59 @@
+@startuml
+title Diagrama de Secuencia - Flujo Principal (main.py)
+
+participant main as "main.py"
+participant RegistroService as "RegistroForestalService"
+participant PlantacionService
+participant TrabajadorService
+participant RiegoTasks as "Sistema de Riego (Threads)"
+participant FincasService
+
+main -> RegistroService: crear_registro(...)
+activate RegistroService
+RegistroService --> main: registro_forestal
+deactivate RegistroService
+
+main -> PlantacionService: plantar(cultivos...)
+activate PlantacionService
+PlantacionService --> main
+deactivate PlantacionService
+
+main -> TrabajadorService: contratar_trabajador(...)
+activate TrabajadorService
+TrabajadorService --> main
+deactivate TrabajadorService
+
+main -> RiegoTasks: start() (inicia Temp, Hum, Control)
+activate RiegoTasks
+
+note over main, RiegoTasks: Simulación en curso (time.sleep)
+
+main -> TrabajadorService: trabajar(...)
+activate TrabajadorService
+TrabajadorService --> main
+deactivate TrabajadorService
+
+main -> FincasService: fumigar(...)
+activate FincasService
+FincasService --> main
+deactivate FincasService
+
+main -> FincasService: cosechar_y_empaquetar(...)
+activate FincasService
+FincasService --> main: paquetes
+deactivate FincasService
+
+main -> RegistroService: persistir_registro(registro_forestal)
+activate RegistroService
+RegistroService --> main
+deactivate RegistroService
+
+main -> RiegoTasks: detener() y join()
+deactivate RiegoTasks
+
+main -> RegistroService: leer_registro(...)
+activate RegistroService
+RegistroService --> main: registro_leido
+deactivate RegistroService
+
+@enduml

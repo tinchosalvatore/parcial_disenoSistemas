@@ -964,6 +964,44 @@ except ForestacionException as e:
 
 ## Testing y Validacion
 
+### Testing
+
+#### Ejecutar Tests
+```bash
+# Instalar pytest y plugins
+pip install -r requirements-dev.txt
+
+# Ejecutar todos los tests
+pytest
+
+# Ejecutar con cobertura
+pytest --cov=python_forestacion --cov-report=html
+
+# Ver reporte de cobertura (en macOS/Linux)
+open htmlcov/index.html
+
+# Ver reporte de cobertura (en Windows)
+start htmlcov/index.html
+```
+
+#### Ejecutar Tests Específicos
+```bash
+# Solo tests de patrones
+pytest tests/test_patrones.py
+
+# Tests de cultivos (verbose)
+pytest tests/test_cultivos.py -v
+
+# Solo tests de riego
+pytest tests/test_riego.py
+```
+
+### Diagramas UML
+
+La arquitectura del sistema y los flujos de operaciones principales están documentados en diagramas PlantUML en el directorio `docs/diagrams/`.
+
+Para instrucciones sobre cómo generar y visualizar estos diagramas, consulta el archivo `docs/diagrams/INSTRUCCIONES_DIAGRAMAS.md`.
+
 ### Ejecucion del Sistema Completo
 
 El archivo `main.py` contiene un test de integracion completo que valida:

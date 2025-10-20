@@ -1,0 +1,62 @@
+@startuml
+title Vista General de Patrones de Diseño
+
+skinparam componentStyle uml2
+
+component [<< Singleton >>\nCultivoServiceRegistry] as Registry
+
+frame "Patrón Factory" {
+    component [<< Factory >>\nCultivoFactory] as Factory
+    component [PlantacionService]
+}
+
+frame "Patrón Strategy" {
+    component [<< Strategy >>\nAbsorcionAguaStrategy] as Strategy
+    component [CultivoService]
+}
+
+frame "Patrón Observer" {
+    component [<< Observer >>\nControlRiegoTask] as ObserverTask
+    component [<< Observable >>\nSensorTasks] as ObservableTasks
+}
+
+' Relaciones
+PlantacionService ..> Factory : usa para crear
+PlantacionService ..> Registry : usa para operar
+
+CultivoService ..> Strategy : es inyectada con
+Registry ..> CultivoService : gestiona
+
+ObservableTasks ..> ObserverTask : notifica a
+ObserverTask ..> PlantacionService : usa para regar
+
+' Notas explicativas
+note right of Registry
+  **Singleton & Registry**
+  Garantiza una única instancia para
+  gestionar todos los servicios de cultivo,
+  actuando como un punto central de acceso.
+end note
+
+note left of Factory
+  **Factory Method**
+  `PlantacionService` delega la creación
+  de `Cultivos` a `CultivoFactory`,
+  desacoplando al cliente de las clases concretas.
+end note
+
+note right of Strategy
+  **Strategy**
+  Permite que el algoritmo de absorción de agua
+  sea intercambiable. `CultivoService` recibe
+  una estrategia (Seasonal o Constante).
+end note
+
+note left of ObserverTask
+  **Observer**
+  Los `Sensores` (Observables) notifican
+  cambios de estado al `ControlRiegoTask` (Observer)
+  sin estar directamente acoplados.
+end note
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+title Diagrama de Secuencia - Plantar Cultivos
+
+actor Usuario
+
+participant PlantacionService
+participant CultivoFactory << (F, #FF7700) Factory >>
+participant Plantacion
+
+Usuario -> PlantacionService: plantar(especie, cantidad)
+activate PlantacionService
+
+PlantacionService -> CultivoFactory: crear_cultivo(especie)
+activate CultivoFactory
+CultivoFactory --> PlantacionService: cultivo_temporal
+deactivate CultivoFactory
+
+PlantacionService -> Plantacion: get_superficie_disponible()
+activate Plantacion
+Plantacion --> PlantacionService: superficie_disponible
+deactivate Plantacion
+
+PlantacionService -> PlantacionService: superficie_requerida = cultivo_temporal.get_superficie()
+
+alt superficie_requerida <= superficie_disponible
+    loop cantidad de veces
+        PlantacionService -> CultivoFactory: crear_cultivo(especie)
+        activate CultivoFactory
+        CultivoFactory --> PlantacionService: nuevo_cultivo
+        deactivate CultivoFactory
+        
+        PlantacionService -> Plantacion: agregar_cultivo(nuevo_cultivo)
+        activate Plantacion
+        Plantacion --> PlantacionService
+        deactivate Plantacion
+    end
+    
+    PlantacionService -> Plantacion: set_superficie_disponible(nueva_superficie)
+    activate Plantacion
+    Plantacion --> PlantacionService
+    deactivate Plantacion
+    
+    PlantacionService --> Usuario: Éxito
+else superficie insuficiente
+    create SuperficieInsuficienteException
+    PlantacionService -> SuperficieInsuficienteException: new(requerida, disponible)
+    PlantacionService -> Usuario: <<lanza>> SuperficieInsuficienteException
+end
+
+deactivate PlantacionService
+
+@enduml
