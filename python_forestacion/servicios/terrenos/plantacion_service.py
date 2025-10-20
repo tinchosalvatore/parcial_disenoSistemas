@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 from datetime import date
+from collections import defaultdict
 
 from python_forestacion.patrones.factory.cultivo_factory import CultivoFactory
 from python_forestacion.excepciones.superficie_insuficiente_exception import SuperficieInsuficienteException
@@ -47,7 +48,7 @@ class PlantacionService:
 
     def regar(self, plantacion: 'Plantacion', fecha: date, temperatura: float, humedad: float) -> None:
         """
-        Riega todos los cultivos de la plantación.
+        Riega todos los cultivos de la plantación y muestra un resumen de la absorción.
 
         Raises:
             AguaAgotadaException: Si no hay suficiente agua en la plantación.
@@ -62,9 +63,22 @@ class PlantacionService:
         print(f"Regando la plantación... (se consumen {AGUA_CONSUMIDA_RIEGO}L de agua)")
 
         registry = CultivoServiceRegistry.get_instance()
+        
+        # Agrupa la absorción por tipo de cultivo
+        absorcion_por_tipo = defaultdict(lambda: {'cantidad': 0, 'total_absorbido': 0})
+        
         for cultivo in plantacion.get_cultivos():
             agua_absorbida = registry.absorber_agua(cultivo, fecha, temperatura, humedad)
-            print(f"  - Un {type(cultivo).__name__} absorbió {agua_absorbida}L de agua.")
+            tipo = type(cultivo).__name__
+            resumen = absorcion_por_tipo[tipo]
+            resumen['cantidad'] += 1
+            resumen['total_absorbido'] += agua_absorbida
+
+        # Imprime el resumen
+        for tipo, resumen in absorcion_por_tipo.items():
+            # La absorción individual es el total absorbido dividido por la cantidad de plantas
+            absorcion_individual = resumen['total_absorbido'] / resumen['cantidad']
+            print(f"  - {resumen['cantidad']}x {tipo} absorbieron {absorcion_individual:.0f}L cada uno (Total: {resumen['total_absorbido']}L).")
 
     def mostrar_datos(self, plantacion: 'Plantacion') -> None:
         """Muestra los datos de una entidad Plantacion."""
