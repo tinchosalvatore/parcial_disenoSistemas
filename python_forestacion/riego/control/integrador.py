@@ -1,3 +1,22 @@
+"""
+Archivo integrador generado automaticamente
+Directorio: /home/martinsalvatore/repos/python/clases_del_java/parcial/parcial_disenoSistemas/python_forestacion/riego/control
+Fecha: 2025-10-21 18:14:55
+Total de archivos integrados: 2
+"""
+
+# ================================================================================
+# ARCHIVO 1/2: __init__.py
+# Ruta: /home/martinsalvatore/repos/python/clases_del_java/parcial/parcial_disenoSistemas/python_forestacion/riego/control/__init__.py
+# ================================================================================
+
+
+
+# ================================================================================
+# ARCHIVO 2/2: control_riego_task.py
+# Ruta: /home/martinsalvatore/repos/python/clases_del_java/parcial/parcial_disenoSistemas/python_forestacion/riego/control/control_riego_task.py
+# ================================================================================
+
 import threading
 import time
 from datetime import date
@@ -79,3 +98,5 @@ class ControlRiegoTask(threading.Thread, Observer[EventoSensor]):
     def detener(self) -> None:
         """Señaliza al hilo que debe detenerse."""
         self._detenido.set()
+
+

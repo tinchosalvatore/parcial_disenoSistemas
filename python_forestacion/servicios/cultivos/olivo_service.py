@@ -17,4 +17,4 @@ class OlivoService(ArbolService):
     def mostrar_datos(self, cultivo: 'Olivo') -> None:
         """Muestra los datos generales y los específicos del Olivo."""
         super().mostrar_datos(cultivo)
-        print(f"Produce aceitunas: {cultivo.produce_aceitunas()}")
+        print(f"Tipo de aceituna: {cultivo.get_tipo_aceituna().name}")

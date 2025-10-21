@@ -1,11 +1,13 @@
 import threading
 import time
 import random
+from datetime import datetime
 
 from python_forestacion.patrones.observer.observable import Observable
 from python_forestacion.constantes import INTERVALO_SENSOR_TEMPERATURA
+from python_forestacion.patrones.observer.eventos.evento_sensor import EventoSensor
 
-class TemperaturaReaderTask(threading.Thread, Observable[float]):
+class TemperaturaReaderTask(threading.Thread, Observable[EventoSensor]):
     """
     Tarea que se ejecuta en un hilo para leer la temperatura simulada.
     Es un Observable que notifica a sus observadores con cada nueva lectura.
@@ -25,7 +27,8 @@ class TemperaturaReaderTask(threading.Thread, Observable[float]):
             try:
                 temp = self._leer_temperatura()
                 print(f"[Sensor Temperatura] Nueva lectura: {temp}°C")
-                self.notificar_observadores(temp)
+                evento = EventoSensor(valor=temp, fecha=datetime.now())
+                self.notificar_observadores(evento)
                 time.sleep(INTERVALO_SENSOR_TEMPERATURA)
             except Exception as e:
                 print(f"[Sensor Temperatura] Error: {e}")

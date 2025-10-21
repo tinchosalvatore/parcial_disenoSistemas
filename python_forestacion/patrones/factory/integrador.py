@@ -1,3 +1,22 @@
+"""
+Archivo integrador generado automaticamente
+Directorio: /home/martinsalvatore/repos/python/clases_del_java/parcial/parcial_disenoSistemas/python_forestacion/patrones/factory
+Fecha: 2025-10-21 18:14:55
+Total de archivos integrados: 2
+"""
+
+# ================================================================================
+# ARCHIVO 1/2: __init__.py
+# Ruta: /home/martinsalvatore/repos/python/clases_del_java/parcial/parcial_disenoSistemas/python_forestacion/patrones/factory/__init__.py
+# ================================================================================
+
+
+
+# ================================================================================
+# ARCHIVO 2/2: cultivo_factory.py
+# Ruta: /home/martinsalvatore/repos/python/clases_del_java/parcial/parcial_disenoSistemas/python_forestacion/patrones/factory/cultivo_factory.py
+# ================================================================================
+
 from typing import TYPE_CHECKING
 
 # Impide importaciones circulares, ya que es False durante tiempo de ejecucion, pero True durante el chequeo de tipos
@@ -61,3 +80,5 @@ class CultivoFactory:
             raise ValueError(f"Especie de cultivo desconocida: {especie}")
         
         return factories[especie]()
+
+

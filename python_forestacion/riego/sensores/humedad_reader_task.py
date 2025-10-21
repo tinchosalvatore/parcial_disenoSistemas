@@ -1,11 +1,13 @@
 import threading
 import time
 import random
+from datetime import datetime
 
 from python_forestacion.patrones.observer.observable import Observable
 from python_forestacion.constantes import INTERVALO_SENSOR_HUMEDAD
+from python_forestacion.patrones.observer.eventos.evento_sensor import EventoSensor
 
-class HumedadReaderTask(threading.Thread, Observable[float]):
+class HumedadReaderTask(threading.Thread, Observable[EventoSensor]):
     """
     Tarea que se ejecuta en un hilo para leer la humedad simulada.
     Es un Observable que notifica a sus observadores con cada nueva lectura.
@@ -25,7 +27,8 @@ class HumedadReaderTask(threading.Thread, Observable[float]):
             try:
                 humedad = self._leer_humedad()
                 print(f"[Sensor Humedad] Nueva lectura: {humedad}%")
-                self.notificar_observadores(humedad)
+                evento = EventoSensor(valor=humedad, fecha=datetime.now())
+                self.notificar_observadores(evento)
                 time.sleep(INTERVALO_SENSOR_HUMEDAD)
             except Exception as e:
                 print(f"[Sensor Humedad] Error: {e}")
