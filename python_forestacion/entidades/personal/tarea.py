@@ -5,7 +5,7 @@ class Tarea:
     Representa una tarea que puede ser asignada a un trabajador.
     """
     _next_id = 1
-    _lock = Lock()
+    _lock = Lock()  # para el manejo de concurrencia de los Hilos
 
     def __init__(self, descripcion: str, duracion_horas: int):
         """

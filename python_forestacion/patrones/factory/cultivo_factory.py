@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+# Impide importaciones circulares, ya que es False durante tiempo de ejecucion, pero True durante el chequeo de tipos
+# como por ejemplo: List[Cultivo]
 if TYPE_CHECKING:
     from python_forestacion.entidades.cultivos.cultivo import Cultivo
     from python_forestacion.entidades.cultivos.pino import Pino

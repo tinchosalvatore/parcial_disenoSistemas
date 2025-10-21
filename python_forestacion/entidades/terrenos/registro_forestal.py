@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+# Cuidar imports circulares, es False durante tiempo de ejecucion, pero no para el chequeo de tipos
 if TYPE_CHECKING:
     from python_forestacion.entidades.terrenos.tierra import Tierra
     from python_forestacion.entidades.terrenos.plantacion import Plantacion
@@ -11,7 +12,7 @@ class RegistroForestal:
     """
     def __init__(self, propietario: str, tierra: 'Tierra', plantacion: 'Plantacion'):
         """
-        Inicializa el registro forestal.
+        Inicializa el registro forestal. Tambien chequea la coherencia de los datos sobre el propietario.
 
         Args:
             propietario: Nombre del propietario del registro.

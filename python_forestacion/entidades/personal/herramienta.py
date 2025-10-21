@@ -9,6 +9,7 @@ class Herramienta:
         Args:
             nombre: El nombre de la herramienta (ej: 'Pala').
             tipo: El tipo de herramienta (ej: 'Manual', 'Maquinaria').
+        No pueden estar vacíos
         """
         if not nombre or not tipo:
             raise ValueError("El nombre y el tipo no pueden estar vacíos.")

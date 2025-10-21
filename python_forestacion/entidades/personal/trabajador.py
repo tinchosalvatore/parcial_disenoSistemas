@@ -1,5 +1,7 @@
 from typing import List, Optional, TYPE_CHECKING
 
+# evita importaciones circulares, ya que es False durante tiempo de ejecucion, pero True durante el chequeo de
+# tipos como Optional[AptoMedico] o List[Tarea]
 if TYPE_CHECKING:
     from python_forestacion.entidades.personal.apto_medico import AptoMedico
     from python_forestacion.entidades.personal.tarea import Tarea

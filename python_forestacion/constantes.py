@@ -1,6 +1,7 @@
 """
 Archivo central para todas las constantes del proyecto
 Prohibido el uso de "magic numbers" en el resto del código ya que todos provienen de aca
+Tambien se especifican las unidades de medida de cada constante con comentarios
 """
 
 # ==============================================================================

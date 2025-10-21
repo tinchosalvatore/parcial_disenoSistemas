@@ -7,12 +7,12 @@ class Olivo(Arbol):
     """
     def __init__(self, produce_aceitunas: bool):
         """
-        Inicializa un olivo.
+        Inicializa un olivo. Asignando sus valores magicos correspondiente
 
         Args:
             produce_aceitunas: True si la variedad produce aceitunas.
         """
-        super().__init__(agua=AGUA_INICIAL_OLIVO, superficie=SUPERFICIE_OLIVO)
+        super().__init__(agua=AGUA_INICIAL_OLIVO, superficie=SUPERFICIE_OLIVO)  
         self._produce_aceitunas = produce_aceitunas
 
     def produce_aceitunas(self) -> bool:

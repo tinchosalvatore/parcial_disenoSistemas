@@ -4,7 +4,7 @@ class Tierra:
     """
     def __init__(self, codigo_catastral: str, propietario: str, superficie: float):
         """
-        Inicializa la tierra.
+        Inicializa la tierra. Y establece algunas excepciones basicas
 
         Args:
             codigo_catastral: Identificador único del catastro.

@@ -23,6 +23,7 @@ class CultivoServiceRegistry:
     _instance = None
     _lock = Lock()
 
+# Esta funciona hace que la clase sea un Singleton
     def __new__(cls):
         if cls._instance is None:
             with cls._lock:
