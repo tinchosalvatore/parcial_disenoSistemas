@@ -1,59 +1,158 @@
 @startuml
-title Diagrama de Secuencia - Flujo Principal (main.py)
+title Diagrama de Secuencia - Flujo Principal (main.py) - CORREGIDO
 
 participant main as "main.py"
 participant RegistroService as "RegistroForestalService"
 participant PlantacionService
+participant Trabajador
 participant TrabajadorService
+participant AptoMedico
+participant Tarea
 participant RiegoTasks as "Sistema de Riego (Threads)"
 participant FincasService
 
-main -> RegistroService: crear_registro(...)
+== 1. Inicialización ==
+main -> RegistroService: crear_registro(propietario, codigo_catastral, sup_tierra, sup_plantacion)
 activate RegistroService
 RegistroService --> main: registro_forestal
 deactivate RegistroService
 
-main -> PlantacionService: plantar(cultivos...)
+note over main
+  plantacion = registro.get_plantacion()
+  plantacion.set_agua_disponible(500.0)
+end note
+
+== 2. Plantación de Cultivos ==
+main -> PlantacionService: plantar(plantacion, "Pino", 10)
 activate PlantacionService
 PlantacionService --> main
 deactivate PlantacionService
 
-main -> TrabajadorService: contratar_trabajador(...)
-activate TrabajadorService
-TrabajadorService --> main
-deactivate TrabajadorService
+main -> PlantacionService: plantar(plantacion, "Olivo", 5)
+activate PlantacionService
+PlantacionService --> main
+deactivate PlantacionService
 
-main -> RiegoTasks: start() (inicia Temp, Hum, Control)
-activate RiegoTasks
+main -> PlantacionService: plantar(plantacion, "Lechuga", 20)
+activate PlantacionService
+PlantacionService --> main
+deactivate PlantacionService
 
-note over main, RiegoTasks: Simulación en curso (time.sleep)
+main -> PlantacionService: plantar(plantacion, "Zanahoria", 30)
+activate PlantacionService
+PlantacionService --> main
+deactivate PlantacionService
 
-main -> TrabajadorService: trabajar(...)
-activate TrabajadorService
-TrabajadorService --> main
-deactivate TrabajadorService
-
-main -> FincasService: fumigar(...)
-activate FincasService
-FincasService --> main
-deactivate FincasService
-
-main -> FincasService: cosechar_y_empaquetar(...)
-activate FincasService
-FincasService --> main: paquetes
-deactivate FincasService
-
-main -> RegistroService: persistir_registro(registro_forestal)
+== 3. Mostrar Estado Inicial ==
+main -> RegistroService: mostrar_datos(registro, tierra_service, plantacion_service)
 activate RegistroService
 RegistroService --> main
 deactivate RegistroService
 
-main -> RiegoTasks: detener() y join()
-deactivate RiegoTasks
+== 4. Gestión de Personal ==
+create Trabajador
+main -> Trabajador: new("Carlos", "Gomez", "30123456")
+activate Trabajador
+Trabajador --> main: trabajador1
+deactivate Trabajador
 
-main -> RegistroService: leer_registro(...)
+create AptoMedico
+main -> AptoMedico: new(fecha_emision, fecha_vencimiento, True)
+activate AptoMedico
+AptoMedico --> main: apto_medico
+deactivate AptoMedico
+
+main -> TrabajadorService: asignar_apto_medico(trabajador1, apto_medico)
+activate TrabajadorService
+TrabajadorService --> main
+deactivate TrabajadorService
+
+create Tarea
+main -> Tarea: new("Regar", DURACION_TAREA_REGAR)
+activate Tarea
+Tarea --> main: tarea1
+deactivate Tarea
+
+main -> Trabajador: asignar_tarea(tarea1)
+activate Trabajador
+Trabajador --> main
+deactivate Trabajador
+
+create Tarea
+main -> Tarea: new("Cosechar", DURACION_TAREA_COSECHAR)
+activate Tarea
+Tarea --> main: tarea2
+deactivate Tarea
+
+main -> Trabajador: asignar_tarea(tarea2)
+activate Trabajador
+Trabajador --> main
+deactivate Trabajador
+
+main -> main: plantacion.agregar_trabajador(trabajador1)
+
+main -> TrabajadorService: mostrar_datos(trabajador1)
+activate TrabajadorService
+TrabajadorService --> main
+deactivate TrabajadorService
+
+== 5. Sistema de Riego Automatizado ==
+main -> RiegoTasks: start() (inicia Temp, Hum, Control)
+activate RiegoTasks
+
+note over main, RiegoTasks
+  Simulación en curso (time.sleep 10 segundos)
+  - Sensores leyendo cada 2-3 segundos
+  - Control evaluando condiciones cada 2.5s
+  - Riego automático si temp>8°C y humedad<50%
+end note
+
+== 6. Operaciones de Negocio ==
+main -> TrabajadorService: trabajar(trabajador1, date.today(), herramienta)
+activate TrabajadorService
+TrabajadorService --> main: resultado (bool)
+deactivate TrabajadorService
+
+main -> FincasService: fumigar(plantacion)
+activate FincasService
+FincasService --> main
+deactivate FincasService
+
+main -> FincasService: cosechar_y_empaquetar(plantacion)
+activate FincasService
+FincasService --> main: paquetes (List)
+deactivate FincasService
+
+== 7. Persistencia ==
+main -> RegistroService: persistir_registro(registro_forestal)
 activate RegistroService
+note right: Guarda en data/{propietario}.dat
+RegistroService --> main
+deactivate RegistroService
+
+== 8. Detención del Sistema de Riego ==
+main -> RiegoTasks: detener() y join(timeout)
+deactivate RiegoTasks
+note over RiegoTasks: Graceful shutdown con Event
+
+== 9. Verificación de Persistencia ==
+main -> RegistroService: leer_registro(propietario)
+activate RegistroService
+note right: Lee desde data/{propietario}.dat
 RegistroService --> main: registro_leido
 deactivate RegistroService
+
+main -> RegistroService: mostrar_datos(registro_leido, tierra_service, plantacion_service)
+activate RegistroService
+RegistroService --> main
+deactivate RegistroService
+
+note over main
+  EJECUCION COMPLETADA EXITOSAMENTE
+  - Singleton: Registry única instancia
+  - Factory: Creación de 4 tipos de cultivos
+  - Observer: Sensores y notificaciones
+  - Strategy: Absorción diferenciada
+end note
 
 @enduml
