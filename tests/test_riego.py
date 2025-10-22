@@ -1,11 +1,13 @@
 import pytest
 import time
 from unittest.mock import MagicMock
+from datetime import datetime
 
 from python_forestacion.riego.sensores.temperatura_reader_task import TemperaturaReaderTask
 from python_forestacion.riego.sensores.humedad_reader_task import HumedadReaderTask
 from python_forestacion.riego.control.control_riego_task import ControlRiegoTask
 from python_forestacion.constantes import TEMP_MIN_RIEGO, HUMEDAD_MAX_RIEGO
+from python_forestacion.patrones.observer.eventos.evento_sensor import EventoSensor
 
 # Fixtures para las tareas
 @pytest.fixture
@@ -28,20 +30,26 @@ class TestControlRiegoLogic:
 
     def test_debe_regar_condiciones_optimas(self, control_task: ControlRiegoTask, temperatura_task: TemperaturaReaderTask, humedad_task: HumedadReaderTask):
         """Verifica que debe regar cuando la temperatura es alta y la humedad es baja."""
-        control_task.actualizar(temperatura_task, TEMP_MIN_RIEGO + 1)
-        control_task.actualizar(humedad_task, HUMEDAD_MAX_RIEGO - 1)
+        evento_temp = EventoSensor(valor=TEMP_MIN_RIEGO + 1, fecha=datetime.now())
+        evento_hum = EventoSensor(valor=HUMEDAD_MAX_RIEGO - 1, fecha=datetime.now())
+        control_task.actualizar(temperatura_task, evento_temp)
+        control_task.actualizar(humedad_task, evento_hum)
         assert control_task._debe_regar() is True
 
     def test_no_debe_regar_por_baja_temperatura(self, control_task: ControlRiegoTask, temperatura_task: TemperaturaReaderTask, humedad_task: HumedadReaderTask):
         """Verifica que no riega si la temperatura es muy baja."""
-        control_task.actualizar(temperatura_task, TEMP_MIN_RIEGO - 1)
-        control_task.actualizar(humedad_task, HUMEDAD_MAX_RIEGO - 1)
+        evento_temp = EventoSensor(valor=TEMP_MIN_RIEGO - 1, fecha=datetime.now())
+        evento_hum = EventoSensor(valor=HUMEDAD_MAX_RIEGO - 1, fecha=datetime.now())
+        control_task.actualizar(temperatura_task, evento_temp)
+        control_task.actualizar(humedad_task, evento_hum)
         assert control_task._debe_regar() is False
 
     def test_no_debe_regar_por_alta_humedad(self, control_task: ControlRiegoTask, temperatura_task: TemperaturaReaderTask, humedad_task: HumedadReaderTask):
         """Verifica que no riega si la humedad es muy alta."""
-        control_task.actualizar(temperatura_task, TEMP_MIN_RIEGO + 1)
-        control_task.actualizar(humedad_task, HUMEDAD_MAX_RIEGO + 1)
+        evento_temp = EventoSensor(valor=TEMP_MIN_RIEGO + 1, fecha=datetime.now())
+        evento_hum = EventoSensor(valor=HUMEDAD_MAX_RIEGO + 1, fecha=datetime.now())
+        control_task.actualizar(temperatura_task, evento_temp)
+        control_task.actualizar(humedad_task, evento_hum)
         assert control_task._debe_regar() is False
 
     def test_no_debe_regar_sin_datos_de_sensores(self, control_task: ControlRiegoTask):

@@ -4,6 +4,7 @@ from python_forestacion.entidades.cultivos.pino import Pino
 from python_forestacion.entidades.cultivos.olivo import Olivo
 from python_forestacion.entidades.cultivos.lechuga import Lechuga
 from python_forestacion.entidades.cultivos.zanahoria import Zanahoria
+from python_forestacion.entidades.cultivos.tipo_aceituna import TipoAceituna
 from python_forestacion.constantes import AGUA_INICIAL_PINO, SUPERFICIE_PINO
 
 # Usamos la factory para crear instancias para los tests
@@ -22,7 +23,7 @@ def test_creacion_olivo():
     """Verifica que un Olivo se crea correctamente."""
     olivo = CultivoFactory.crear_cultivo("Olivo")
     assert isinstance(olivo, Olivo)
-    assert olivo.produce_aceitunas() is True
+    assert olivo.get_tipo_aceituna() == TipoAceituna.ARBEQUINA
 
 def test_creacion_lechuga():
     """Verifica que una Lechuga se crea correctamente."""
